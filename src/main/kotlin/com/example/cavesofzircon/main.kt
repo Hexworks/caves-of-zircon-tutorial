@@ -1,23 +1,18 @@
 package com.example.cavesofzircon
 
-import org.hexworks.zircon.api.ColorThemes
-import org.hexworks.zircon.api.Components
+import com.example.cavesofzircon.view.StartView
+import org.hexworks.zircon.api.CP437TilesetResources
 import org.hexworks.zircon.api.SwingApplications
-import org.hexworks.zircon.api.component.ComponentAlignment
-import org.hexworks.zircon.api.screen.Screen
+import org.hexworks.zircon.api.application.AppConfig
 
 fun main(args: Array<String>) {
 
-    val grid = SwingApplications.startTileGrid()
-    val screen = Screen.create(grid)
-
-    screen.addComponent(
-        Components.header()
-            .withText("Hello, from Caves of Zircon!")
-            .withAlignmentWithin(screen, ComponentAlignment.CENTER)
+    val grid = SwingApplications.startTileGrid(
+        // a grid can be configured using the AppConfig builder
+        AppConfig.newBuilder()
+            // We can choose a tileset that will be used by default
+            .withDefaultTileset(CP437TilesetResources.rogueYun16x16())
+            .build()
     )
-
-    screen.theme = ColorThemes.arc()
-    screen.display()
-
+    StartView(grid).dock()
 }
