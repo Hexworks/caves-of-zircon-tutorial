@@ -41,7 +41,7 @@ tasks {
         archiveVersion.set("")
         mergeServiceFiles()
         manifest {
-            attributes(mapOf("Main-Class" to "com.example.MainKt"))
+            attributes(mapOf("Main-Class" to "com.example.cavesofzircon.MainKt"))
         }
     }
 }
