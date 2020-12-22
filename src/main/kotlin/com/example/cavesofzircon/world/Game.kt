@@ -1,21 +1,21 @@
 package com.example.cavesofzircon.world
 
-import com.example.cavesofzircon.GameConfig.GAME_COMPONENT_SIZE
-import com.example.cavesofzircon.GameConfig.WORLD_SIZE
-import com.example.cavesofzircon.builders.WorldBuilder
-import org.hexworks.zircon.api.data.Size3D
+import com.example.cavesofzircon.attributes.types.Player
+import com.example.cavesofzircon.extensions.GameEntity
 
-class Game(val world: World) {
+class Game(
+    val world: World,
+    val player: GameEntity<Player>
+) {
 
     companion object {
 
         fun create(
-            worldSize: Size3D = WORLD_SIZE,
-            visibleSize: Size3D = GAME_COMPONENT_SIZE
+            player: GameEntity<Player>,
+            world: World
         ) = Game(
-            WorldBuilder(worldSize)
-                .makeCaves()
-                .build(visibleSize)
+            world = world,
+            player = player
         )
     }
 }

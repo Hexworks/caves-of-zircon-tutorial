@@ -1,5 +1,6 @@
 package com.example.cavesofzircon.builders
 
+import com.example.cavesofzircon.builders.GameColors.ACCENT_COLOR
 import com.example.cavesofzircon.builders.GameColors.FLOOR_BACKGROUND
 import com.example.cavesofzircon.builders.GameColors.FLOOR_FOREGROUND
 import com.example.cavesofzircon.builders.GameColors.WALL_BACKGROUND
@@ -24,4 +25,9 @@ object GameTileRepository {
         .withBackgroundColor(WALL_BACKGROUND)
         .buildCharacterTile()
 
+    val PLAYER = Tile.newBuilder()
+        .withCharacter('@')
+        .withBackgroundColor(FLOOR_BACKGROUND)
+        .withForegroundColor(ACCENT_COLOR)
+        .buildCharacterTile()
 }

@@ -7,6 +7,7 @@ import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.builders.GameTileRepository
 import com.example.cavesofzircon.world.Game
+import com.example.cavesofzircon.world.GameBuilder
 import org.hexworks.zircon.api.ComponentDecorations.box
 import org.hexworks.zircon.api.Components
 import org.hexworks.zircon.api.component.ColorTheme
@@ -20,7 +21,7 @@ import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
 
 class PlayView(
     private val grid: TileGrid,
-    private val game: Game = Game.create(),
+    private val game: Game = GameBuilder.create(),
     theme: ColorTheme = GameConfig.THEME
 ) : BaseView(grid, theme) {
 
