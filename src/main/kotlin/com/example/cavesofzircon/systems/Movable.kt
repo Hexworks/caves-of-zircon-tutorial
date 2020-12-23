@@ -2,6 +2,7 @@ package com.example.cavesofzircon.systems
 
 import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.extensions.position
+import com.example.cavesofzircon.extensions.tryActionsOn
 import com.example.cavesofzircon.messages.MoveCamera
 import org.hexworks.amethyst.api.MessageResponse
 import com.example.cavesofzircon.messages.MoveTo
@@ -16,16 +17,23 @@ object Movable : BaseFacet<GameContext, MoveTo>(MoveTo::class) {
     override suspend fun receive(message: MoveTo): Response {
         val (context, entity, position) = message
         val world = context.world
-        val previousPosition = entity.position      // 1
+        val previousPosition = entity.position
         var result: Response = Pass
-        if (world.moveEntity(entity, position)) {
-            result = if (entity.type == Player) {            // 2
-                MessageResponse(MoveCamera(                  // 3
-                        context = context,
-                        source = entity,
-                        previousPosition = previousPosition
-                ))
-            } else Consumed                                  // 4
+        world.fetchBlockAtOrNull(position)?.let { block ->
+            if (block.isOccupied) {
+                result = entity.tryActionsOn(context, block.occupier.get())
+            } else {
+                if (world.moveEntity(entity, position)) {
+                    result = Consumed
+                    if (entity.type == Player) {
+                        result = MessageResponse(MoveCamera(
+                                context = context,
+                                source = entity,
+                                previousPosition = previousPosition
+                        ))
+                    }
+                }
+            }
         }
         return result
     }

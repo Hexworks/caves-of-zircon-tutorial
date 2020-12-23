@@ -6,22 +6,20 @@ import com.example.cavesofzircon.world.World
 import org.hexworks.zircon.api.data.Position3D
 import org.hexworks.zircon.api.data.Size3D
 
-class WorldBuilder(private val worldSize: Size3D) {                         // 1
+class WorldBuilder(private val worldSize: Size3D) {
 
-    private val width = worldSize.xLength
-    private val height = worldSize.zLength
-    private var blocks: MutableMap<Position3D, GameBlock> = mutableMapOf()  // 2
+    private var blocks: MutableMap<Position3D, GameBlock> = mutableMapOf()
 
-    fun makeCaves(): WorldBuilder {                                         // 3
+    fun makeCaves(): WorldBuilder {
         return randomizeTiles()
             .smooth(8)
     }
 
-    fun build(visibleSize: Size3D): World = World(blocks, visibleSize, worldSize) // 4
+    fun build(visibleSize: Size3D): World = World(blocks, visibleSize, worldSize)
 
     private fun randomizeTiles(): WorldBuilder {
         forAllPositions { pos ->
-            blocks[pos] = if (Math.random() < 0.5) {                        // 5
+            blocks[pos] = if (Math.random() < 0.5) {
                 GameBlockFactory.floor()
             } else GameBlockFactory.wall()
         }
@@ -29,15 +27,15 @@ class WorldBuilder(private val worldSize: Size3D) {                         // 1
     }
 
     private fun smooth(iterations: Int): WorldBuilder {
-        val newBlocks = mutableMapOf<Position3D, GameBlock>()               // 6
+        val newBlocks = mutableMapOf<Position3D, GameBlock>()
         repeat(iterations) {
             forAllPositions { pos ->
-                val (x, y, z) = pos                                         // 7
+                val (x, y, z) = pos
                 var floors = 0
                 var rocks = 0
-                pos.sameLevelNeighborsShuffled().plus(pos).forEach { neighbor -> // 8
-                    blocks.whenPresent(neighbor) { block ->                 // 9
-                        if (block.isFloor) {
+                pos.sameLevelNeighborsShuffled().plus(pos).forEach { neighbor ->
+                    blocks.whenPresent(neighbor) { block ->
+                        if (block.isEmptyFloor) {
                             floors++
                         } else rocks++
                     }
@@ -45,16 +43,16 @@ class WorldBuilder(private val worldSize: Size3D) {                         // 1
                 newBlocks[Position3D.create(x, y, z)] =
                     if (floors >= rocks) GameBlockFactory.floor() else GameBlockFactory.wall()
             }
-            blocks = newBlocks                                              // 10
+            blocks = newBlocks
         }
         return this
     }
 
-    private fun forAllPositions(fn: (Position3D) -> Unit) {                 // 11
+    private fun forAllPositions(fn: (Position3D) -> Unit) {
         worldSize.fetchPositions().forEach(fn)
     }
 
-    private fun MutableMap<Position3D, GameBlock>.whenPresent(pos: Position3D, fn: (GameBlock) -> Unit) { // 12
+    private fun MutableMap<Position3D, GameBlock>.whenPresent(pos: Position3D, fn: (GameBlock) -> Unit) {
         this[pos]?.let(fn)
     }
 }

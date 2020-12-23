@@ -95,6 +95,14 @@ class World(
 
     }
 
+    fun removeEntity(entity: Entity<EntityType, GameContext>) {
+        fetchBlockAt(entity.position).map {
+            it.removeEntity(entity)
+        }
+        engine.removeEntity(entity)
+        entity.position = Position3D.unknown()
+    }
+
     /**
      * Finds an empty location within the given area (offset and size) on this [World].
      */
