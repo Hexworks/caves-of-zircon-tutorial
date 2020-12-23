@@ -17,38 +17,45 @@ import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.view.base.BaseView
 import org.hexworks.cobalt.databinding.api.extension.toProperty
 import org.hexworks.zircon.api.game.ProjectionMode.TOP_DOWN
+import org.hexworks.zircon.api.uievent.KeyboardEventType
+import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
 
 class PlayView(
-    private val grid: TileGrid,
-    private val game: Game = GameBuilder.create(),
-    theme: ColorTheme = GameConfig.THEME
+        private val grid: TileGrid,
+        private val game: Game = GameBuilder.create(),
+        theme: ColorTheme = GameConfig.THEME
 ) : BaseView(grid, theme) {
 
     init {
         val sidebar = Components.panel()
-            .withSize(SIDEBAR_WIDTH, WINDOW_HEIGHT)
-            .withDecorations(box())
-            .build()
+                .withSize(SIDEBAR_WIDTH, WINDOW_HEIGHT)
+                .withDecorations(box())
+                .build()
 
         val logArea = Components.logArea()
-            .withDecorations(box(title = "Log"))            // 1
-            .withSize(WINDOW_WIDTH - SIDEBAR_WIDTH, LOG_AREA_HEIGHT)
-            .withAlignmentWithin(screen, BOTTOM_RIGHT)      // 2
-            .build()
+                .withDecorations(box(title = "Log"))            // 1
+                .withSize(WINDOW_WIDTH - SIDEBAR_WIDTH, LOG_AREA_HEIGHT)
+                .withAlignmentWithin(screen, BOTTOM_RIGHT)      // 2
+                .build()
 
         val gameComponent = Components.panel()
-            .withSize(game.world.visibleSize.to2DSize())
-            .withComponentRenderer(
-                GameAreaComponentRenderer(
-                    gameArea = game.world,
-                    projectionMode = TOP_DOWN.toProperty(),
-                    fillerTile = GameTileRepository.FLOOR
+                .withSize(game.world.visibleSize.to2DSize())
+                .withComponentRenderer(
+                        GameAreaComponentRenderer(
+                                gameArea = game.world,
+                                projectionMode = TOP_DOWN.toProperty(),
+                                fillerTile = GameTileRepository.FLOOR
+                        )
                 )
-            )
-            .withAlignmentWithin(screen, TOP_RIGHT)
-            .build()
+                .withAlignmentWithin(screen, TOP_RIGHT)
+                .build()
 
         screen.addComponents(sidebar, logArea, gameComponent)
+        screen.handleKeyboardEvents(KeyboardEventType.KEY_PRESSED) {event, _ ->
+            game.world.update(screen, event, game)
+            Processed
+        }
     }
+
 }
