@@ -14,10 +14,10 @@ object GameTileRepository {
     val EMPTY: CharacterTile = Tile.empty()
 
     val FLOOR: CharacterTile = Tile.newBuilder()
-        .withCharacter(Symbols.INTERPUNCT)                  // 1
-        .withForegroundColor(FLOOR_FOREGROUND)              // 2
-        .withBackgroundColor(FLOOR_BACKGROUND)              // 3
-        .buildCharacterTile()                               // 4
+        .withCharacter(Symbols.INTERPUNCT)
+        .withForegroundColor(FLOOR_FOREGROUND)
+        .withBackgroundColor(FLOOR_BACKGROUND)
+        .buildCharacterTile()
 
     val WALL: CharacterTile = Tile.newBuilder()
         .withCharacter('#')
@@ -29,5 +29,11 @@ object GameTileRepository {
         .withCharacter('@')
         .withBackgroundColor(FLOOR_BACKGROUND)
         .withForegroundColor(ACCENT_COLOR)
+        .buildCharacterTile()
+
+    val FUNGUS = Tile.newBuilder()
+        .withCharacter('f')
+        .withBackgroundColor(GameColors.FLOOR_BACKGROUND)
+        .withForegroundColor(GameColors.FUNGUS_COLOR)
         .buildCharacterTile()
 }

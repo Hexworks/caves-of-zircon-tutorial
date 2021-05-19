@@ -3,9 +3,14 @@ package com.example.cavesofzircon.attributes.types
 import org.hexworks.amethyst.api.base.BaseEntityType
 
 object Player : BaseEntityType(
-        name = "player"
+    name = "player"
 )
 
 object Wall : BaseEntityType(
-        name = "wall"
+    name = "wall"
+)
+
+
+object Fungus : BaseEntityType(
+    name = "fungus"
 )

@@ -1,6 +1,7 @@
 package com.example.cavesofzircon.world
 
 import com.example.cavesofzircon.GameConfig
+import com.example.cavesofzircon.GameConfig.FUNGI_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.LOG_AREA_HEIGHT
 import com.example.cavesofzircon.GameConfig.SIDEBAR_WIDTH
 import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
@@ -10,18 +11,20 @@ import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.builders.EntityFactory
 import com.example.cavesofzircon.builders.WorldBuilder
 import com.example.cavesofzircon.extensions.GameEntity
+import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.Position3D
+import org.hexworks.zircon.api.data.Size
 import org.hexworks.zircon.api.data.Size3D
 
-class GameBuilder(val worldSize: Size3D) {          // 1
+class GameBuilder(val worldSize: Size3D) {
 
-    private val visibleSize = Size3D.create(        // 2
+    private val visibleSize = Size3D.create(
         xLength = WINDOW_WIDTH - SIDEBAR_WIDTH,
         yLength = WINDOW_HEIGHT - LOG_AREA_HEIGHT,
         zLength = 1
     )
 
-    val world = WorldBuilder(worldSize)             // 3
+    val world = WorldBuilder(worldSize)
         .makeCaves()
         .build(visibleSize = visibleSize)
 
@@ -30,6 +33,7 @@ class GameBuilder(val worldSize: Size3D) {          // 1
         prepareWorld()
 
         val player = addPlayer()
+        addFungi()
 
         return Game.create(
             player = player,
@@ -37,18 +41,35 @@ class GameBuilder(val worldSize: Size3D) {          // 1
         )
     }
 
-    private fun prepareWorld() = also {             // 4
+    private fun prepareWorld() = also {
         world.scrollUpBy(world.actualSize.zLength)
     }
 
     private fun addPlayer(): GameEntity<Player> {
-        val player = EntityFactory.newPlayer()      // 5
+        return EntityFactory.newPlayer().addToWorld(
+            atLevel = GameConfig.DUNGEON_LEVELS - 1,
+            atArea = world.visibleSize.to2DSize()
+        )
+    }
+
+    private fun addFungi() = also {
+        repeat(world.actualSize.zLength) { level ->
+            repeat(FUNGI_PER_LEVEL) {
+                EntityFactory.newFungus().addToWorld(level)
+            }
+        }
+    }
+
+    private fun <T : EntityType> GameEntity<T>.addToWorld(             // 1
+        atLevel: Int,                                                  // 2
+        atArea: Size = world.actualSize.to2DSize()
+    ): GameEntity<T> {   // 3
         world.addAtEmptyPosition(
-            player,                                 // 6
-            offset = Position3D.create(0, 0, GameConfig.DUNGEON_LEVELS - 1), // 7
-            size = world.visibleSize.copy(zLength = 0)
-        )                                           // 8
-        return player
+            this,
+            offset = Position3D.defaultPosition().withZ(atLevel),      // 4
+            size = Size3D.from2DSize(atArea)
+        )                          // 5
+        return this
     }
 
     companion object {
