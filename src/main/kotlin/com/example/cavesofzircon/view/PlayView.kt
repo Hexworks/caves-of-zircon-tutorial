@@ -38,9 +38,9 @@ class PlayView(
             .build()
 
         val logArea = Components.logArea()
-            .withDecorations(box(title = "Log"))            // 1
+            .withDecorations(box(title = "Log"))
             .withSize(WINDOW_WIDTH - SIDEBAR_WIDTH, LOG_AREA_HEIGHT)
-            .withAlignmentWithin(screen, BOTTOM_RIGHT)      // 2
+            .withAlignmentWithin(screen, BOTTOM_RIGHT)
             .build()
 
         val gameComponent = Components.panel()
@@ -61,13 +61,13 @@ class PlayView(
             Processed
         }
 
-        Zircon.eventBus.subscribeTo<GameLogEvent> { (text) ->   // 1
-            logArea.addParagraph(                               // 2
+        Zircon.eventBus.subscribeTo<GameLogEvent> { (text) ->
+            logArea.addParagraph(
                 paragraph = text,
-                withNewLine = false,                            // 3
-                withTypingEffectSpeedInMs = 10                  // 4
+                withNewLine = false,
+                withTypingEffectSpeedInMs = 10
             )
-            KeepSubscription                                    // 5
+            KeepSubscription
         }
     }
 

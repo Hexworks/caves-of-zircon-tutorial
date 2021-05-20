@@ -20,15 +20,15 @@ object Attackable : BaseFacet<GameContext, Attack>(Attack::class) {
 
         return if (attacker.isPlayer || target.isPlayer) { // 1
 
-            val damage = max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)    // 2
-            val finalDamage = (Math.random() * damage).toInt() + 1  // 3
-            target.combatStats.hp -= finalDamage                    // 4
+            val damage = max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)
+            val finalDamage = (Math.random() * damage).toInt() + 1
+            target.combatStats.hp -= finalDamage
 
             logGameEvent("The $attacker hits the $target for $finalDamage!", Attackable)
 
-            if (target.hasNoHealthLeft()) {         // 5
+            if (target.hasNoHealthLeft()) {
                 target.sendMessage(
-                    Destroy(                        // 6
+                    Destroy(
                         context = context,
                         source = attacker,
                         target = target,
@@ -36,7 +36,7 @@ object Attackable : BaseFacet<GameContext, Attack>(Attack::class) {
                     )
                 )
             }
-            Consumed                                // 7
+            Consumed
         } else Pass
     }
 }

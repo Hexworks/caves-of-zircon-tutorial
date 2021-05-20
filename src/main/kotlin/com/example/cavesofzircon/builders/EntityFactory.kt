@@ -8,6 +8,8 @@ import com.example.cavesofzircon.attributes.FungusSpread
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
 import com.example.cavesofzircon.attributes.types.Fungus
 import com.example.cavesofzircon.attributes.types.Player
+import com.example.cavesofzircon.attributes.types.StairsDown
+import com.example.cavesofzircon.attributes.types.StairsUp
 import com.example.cavesofzircon.attributes.types.Wall
 import com.example.cavesofzircon.messages.Attack
 import com.example.cavesofzircon.messages.Dig
@@ -18,6 +20,8 @@ import com.example.cavesofzircon.systems.Diggable
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.InputReceiver
 import com.example.cavesofzircon.systems.Movable
+import com.example.cavesofzircon.systems.StairClimber
+import com.example.cavesofzircon.systems.StairDescender
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.builder.EntityBuilder
 import org.hexworks.amethyst.api.entity.EntityType
@@ -42,7 +46,7 @@ object EntityFactory {
             )
         )
         behaviors(InputReceiver)
-        facets(Movable, CameraMover)
+        facets(Movable, CameraMover, StairClimber, StairDescender)
     }
 
     fun newWall() = newGameEntityOfType(Wall) {
@@ -68,5 +72,19 @@ object EntityFactory {
         )
         facets(Attackable, Destructible)
         behaviors(FungusGrowth)
+    }
+
+    fun newStairsDown() = newGameEntityOfType(StairsDown) {
+        attributes(
+            EntityTile(GameTileRepository.STAIRS_DOWN),
+            EntityPosition()
+        )
+    }
+
+    fun newStairsUp() = newGameEntityOfType(StairsUp) {
+        attributes(
+            EntityTile(GameTileRepository.STAIRS_UP),
+            EntityPosition()
+        )
     }
 }
