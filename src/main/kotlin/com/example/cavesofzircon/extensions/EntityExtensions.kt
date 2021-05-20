@@ -4,6 +4,9 @@ import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
+import com.example.cavesofzircon.attributes.types.Combatant
+import com.example.cavesofzircon.attributes.types.Player
+import com.example.cavesofzircon.attributes.types.combatStats
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.Attribute
 import org.hexworks.amethyst.api.Consumed
@@ -12,13 +15,16 @@ import org.hexworks.amethyst.api.Response
 import org.hexworks.zircon.api.data.Tile
 import kotlin.reflect.KClass
 
-var AnyGameEntity.position                                          // 1
-    get() = tryToFindAttribute(EntityPosition::class).position      // 2
-    set(value) {                                                    // 3
+var AnyGameEntity.position
+    get() = tryToFindAttribute(EntityPosition::class).position
+    set(value) {
         findAttribute(EntityPosition::class).map {
             it.position = value
         }
     }
+
+val AnyGameEntity.isPlayer: Boolean
+    get() = this.type == Player
 
 val AnyGameEntity.tile: Tile
     get() = this.tryToFindAttribute(EntityTile::class).tile
@@ -26,18 +32,19 @@ val AnyGameEntity.tile: Tile
 val AnyGameEntity.occupiesBlock: Boolean
     get() = findAttribute(BlockOccupier::class).isPresent
 
-// 4
+fun GameEntity<Combatant>.hasNoHealthLeft(): Boolean = combatStats.hp <= 0
+
 fun <T : Attribute> AnyGameEntity.tryToFindAttribute(klass: KClass<T>): T = findAttribute(klass).orElseThrow {
     NoSuchElementException("Entity '$this' has no property with type '${klass.simpleName}'.")
 }
 
-suspend fun AnyGameEntity.tryActionsOn(context: GameContext, target: AnyGameEntity): Response { // 1
-    var result: Response = Pass                                         // 2
-    findAttributeOrNull(EntityActions::class)?.let {                    // 3
+suspend fun AnyGameEntity.tryActionsOn(context: GameContext, target: AnyGameEntity): Response {
+    var result: Response = Pass
+    findAttributeOrNull(EntityActions::class)?.let {
         it.createActionsFor(context, this, target).forEach { action ->
-            if (target.receiveMessage(action) is Consumed) {            // 4
+            if (target.receiveMessage(action) is Consumed) {
                 result = Consumed
-                return@forEach                                          // 5
+                return@forEach
             }
         }
     }

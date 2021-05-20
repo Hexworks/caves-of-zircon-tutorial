@@ -1,5 +1,6 @@
 package com.example.cavesofzircon.builders
 
+import com.example.cavesofzircon.attributes.CombatStats
 import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
@@ -12,6 +13,7 @@ import com.example.cavesofzircon.messages.Attack
 import com.example.cavesofzircon.messages.Dig
 import com.example.cavesofzircon.systems.Attackable
 import com.example.cavesofzircon.systems.CameraMover
+import com.example.cavesofzircon.systems.Destructible
 import com.example.cavesofzircon.systems.Diggable
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.InputReceiver
@@ -32,7 +34,12 @@ object EntityFactory {
         attributes(
             EntityPosition(),
             EntityTile(GameTileRepository.PLAYER),
-            EntityActions(Dig::class, Attack::class)
+            EntityActions(Dig::class, Attack::class),
+            CombatStats.create(
+                maxHp = 100,
+                attackValue = 10,
+                defenseValue = 5
+            )
         )
         behaviors(InputReceiver)
         facets(Movable, CameraMover)
@@ -47,14 +54,19 @@ object EntityFactory {
         facets(Diggable)
     }
 
-    fun newFungus(fungusSpread: FungusSpread = FungusSpread()) = newGameEntityOfType(Fungus) { // 1
+    fun newFungus(fungusSpread: FungusSpread = FungusSpread()) = newGameEntityOfType(Fungus) {
         attributes(
             BlockOccupier,
             EntityPosition(),
             EntityTile(GameTileRepository.FUNGUS),
-            fungusSpread                                // 2
+            fungusSpread,
+            CombatStats.create(
+                maxHp = 10,
+                attackValue = 0,
+                defenseValue = 0
+            )
         )
-        facets(Attackable)
-        behaviors(FungusGrowth)                         // 3
+        facets(Attackable, Destructible)
+        behaviors(FungusGrowth)
     }
 }

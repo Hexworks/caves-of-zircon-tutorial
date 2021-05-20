@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val zircon_version: String by project
 val amethyst_version: String by project
@@ -6,6 +7,9 @@ val slf4j_version: String by project
 val junit_version: String by project
 val mockito_version: String by project
 val assertj_version: String by project
+val compileKotlin: KotlinCompile by tasks
+
+compileKotlin.kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
 
 plugins {
     kotlin("jvm") version "1.4.10"
