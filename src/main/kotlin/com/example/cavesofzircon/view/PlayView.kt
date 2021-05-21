@@ -19,6 +19,8 @@ import org.hexworks.zircon.api.component.ComponentAlignment.BOTTOM_RIGHT
 import org.hexworks.zircon.api.component.ComponentAlignment.TOP_RIGHT
 import org.hexworks.zircon.api.game.ProjectionMode.TOP_DOWN
 import org.hexworks.zircon.api.grid.TileGrid
+import org.hexworks.zircon.api.uievent.KeyCode
+import org.hexworks.zircon.api.uievent.KeyboardEvent
 import org.hexworks.zircon.api.uievent.KeyboardEventType
 import org.hexworks.zircon.api.uievent.Processed
 import org.hexworks.zircon.api.view.base.BaseView
@@ -69,6 +71,14 @@ class PlayView(
             )
             KeepSubscription
         }
+
+        game.world.update(
+            screen, KeyboardEvent(
+                type = KeyboardEventType.KEY_TYPED,
+                key = "",
+                code = KeyCode.DEAD_GRAVE
+            ), game
+        )
     }
 
 }

@@ -5,7 +5,10 @@ import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
 import com.example.cavesofzircon.attributes.FungusSpread
+import com.example.cavesofzircon.attributes.Vision
+import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
+import com.example.cavesofzircon.attributes.types.FOW
 import com.example.cavesofzircon.attributes.types.Fungus
 import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.attributes.types.StairsDown
@@ -17,6 +20,7 @@ import com.example.cavesofzircon.systems.Attackable
 import com.example.cavesofzircon.systems.CameraMover
 import com.example.cavesofzircon.systems.Destructible
 import com.example.cavesofzircon.systems.Diggable
+import com.example.cavesofzircon.systems.FogOfWar
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.InputReceiver
 import com.example.cavesofzircon.systems.Movable
@@ -43,7 +47,8 @@ object EntityFactory {
                 maxHp = 100,
                 attackValue = 10,
                 defenseValue = 5
-            )
+            ),
+            Vision(9)
         )
         behaviors(InputReceiver)
         facets(Movable, CameraMover, StairClimber, StairDescender)
@@ -53,7 +58,8 @@ object EntityFactory {
         attributes(
             EntityPosition(),
             BlockOccupier,
-            EntityTile(GameTileRepository.WALL)
+            EntityTile(GameTileRepository.WALL),
+            VisionBlocker
         )
         facets(Diggable)
     }
@@ -86,5 +92,9 @@ object EntityFactory {
             EntityTile(GameTileRepository.STAIRS_UP),
             EntityPosition()
         )
+    }
+
+    fun newFogOfWar() = newGameEntityOfType(FOW) {
+        behaviors(FogOfWar)
     }
 }

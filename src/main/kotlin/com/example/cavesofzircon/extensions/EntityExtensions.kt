@@ -3,6 +3,7 @@ package com.example.cavesofzircon.extensions
 import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
+import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
 import com.example.cavesofzircon.attributes.types.Combatant
 import com.example.cavesofzircon.attributes.types.Player
@@ -22,6 +23,9 @@ var AnyGameEntity.position
             it.position = value
         }
     }
+
+val AnyGameEntity.blocksVision: Boolean
+    get() = this.findAttribute(VisionBlocker::class).isPresent
 
 val AnyGameEntity.isPlayer: Boolean
     get() = this.type == Player
