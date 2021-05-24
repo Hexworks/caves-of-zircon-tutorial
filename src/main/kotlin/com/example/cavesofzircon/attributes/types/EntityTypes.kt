@@ -25,3 +25,7 @@ object StairsUp : BaseEntityType(
 object FOW : BaseEntityType(
     name = "Fog of War"
 )
+
+object Bat : BaseEntityType(
+    name = "bat"
+), Combatant

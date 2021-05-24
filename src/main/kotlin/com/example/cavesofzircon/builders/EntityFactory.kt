@@ -8,6 +8,7 @@ import com.example.cavesofzircon.attributes.FungusSpread
 import com.example.cavesofzircon.attributes.Vision
 import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
+import com.example.cavesofzircon.attributes.types.Bat
 import com.example.cavesofzircon.attributes.types.FOW
 import com.example.cavesofzircon.attributes.types.Fungus
 import com.example.cavesofzircon.attributes.types.Player
@@ -26,6 +27,7 @@ import com.example.cavesofzircon.systems.InputReceiver
 import com.example.cavesofzircon.systems.Movable
 import com.example.cavesofzircon.systems.StairClimber
 import com.example.cavesofzircon.systems.StairDescender
+import com.example.cavesofzircon.systems.Wanderer
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.builder.EntityBuilder
 import org.hexworks.amethyst.api.entity.EntityType
@@ -40,18 +42,19 @@ object EntityFactory {
 
     fun newPlayer() = newGameEntityOfType(Player) {
         attributes(
+            Vision(9),
             EntityPosition(),
-            EntityTile(GameTileRepository.PLAYER),
-            EntityActions(Dig::class, Attack::class),
+            BlockOccupier,
             CombatStats.create(
                 maxHp = 100,
                 attackValue = 10,
                 defenseValue = 5
             ),
-            Vision(9)
+            EntityTile(GameTileRepository.PLAYER),
+            EntityActions(Dig::class, Attack::class)
         )
         behaviors(InputReceiver)
-        facets(Movable, CameraMover, StairClimber, StairDescender)
+        facets(Movable, CameraMover, StairClimber, StairDescender, Attackable, Destructible)
     }
 
     fun newWall() = newGameEntityOfType(Wall) {
@@ -96,5 +99,21 @@ object EntityFactory {
 
     fun newFogOfWar() = newGameEntityOfType(FOW) {
         behaviors(FogOfWar)
+    }
+
+    fun newBat() = newGameEntityOfType(Bat) {
+        attributes(
+            BlockOccupier,                      // 1
+            EntityPosition(),
+            EntityTile(GameTileRepository.BAT),
+            CombatStats.create(                 // 2
+                maxHp = 5,
+                attackValue = 2,
+                defenseValue = 1
+            ),
+            EntityActions(Attack::class)        // 3
+        )
+        facets(Movable, Attackable, Destructible)   // 4
+        behaviors(Wanderer)                         // 5
     }
 }
