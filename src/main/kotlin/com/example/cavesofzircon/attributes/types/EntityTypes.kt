@@ -8,7 +8,7 @@ object Wall : BaseEntityType(
 
 object Player : BaseEntityType(
     name = "player"
-), Combatant
+), Combatant, ItemHolder
 
 object Fungus : BaseEntityType(
     name = "fungus"
@@ -29,3 +29,8 @@ object FOW : BaseEntityType(
 object Bat : BaseEntityType(
     name = "bat"
 ), Combatant
+
+object Zircon : BaseEntityType(
+    name = "Zircon",
+    description = "A small piece of Zircon. Its value is unfathomable."
+), Item

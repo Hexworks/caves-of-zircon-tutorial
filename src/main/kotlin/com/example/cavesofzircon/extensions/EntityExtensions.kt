@@ -13,8 +13,11 @@ import org.hexworks.amethyst.api.Attribute
 import org.hexworks.amethyst.api.Consumed
 import org.hexworks.amethyst.api.Pass
 import org.hexworks.amethyst.api.Response
+import org.hexworks.amethyst.api.entity.Entity
+import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.zircon.api.data.Tile
 import kotlin.reflect.KClass
+import kotlin.reflect.full.isSuperclassOf
 
 var AnyGameEntity.position
     get() = tryToFindAttribute(EntityPosition::class).position
@@ -53,4 +56,8 @@ suspend fun AnyGameEntity.tryActionsOn(context: GameContext, target: AnyGameEnti
         }
     }
     return result
+}
+
+inline fun <reified T : EntityType> Iterable<AnyGameEntity>.filterType(): List<Entity<T, GameContext>> {
+    return filter { T::class.isSuperclassOf(it.type::class) }.toList() as List<Entity<T, GameContext>>
 }

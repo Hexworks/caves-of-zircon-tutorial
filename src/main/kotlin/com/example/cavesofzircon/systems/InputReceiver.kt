@@ -3,9 +3,11 @@ package com.example.cavesofzircon.systems
 import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.extensions.GameEntity
 import com.example.cavesofzircon.extensions.position
+import com.example.cavesofzircon.messages.InspectInventory
 import com.example.cavesofzircon.messages.MoveDown
 import com.example.cavesofzircon.messages.MoveTo
 import com.example.cavesofzircon.messages.MoveUp
+import com.example.cavesofzircon.messages.PickItemUp
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.Entity
@@ -24,18 +26,28 @@ object InputReceiver : BaseBehavior<GameContext>() {
         val currentPos = player.position
         if (uiEvent is KeyboardEvent) {
             when (uiEvent.code) {
-                KeyCode.KEY_W -> player.moveTo(currentPos.withRelativeY(-1), context) // 1
+                KeyCode.KEY_W -> player.moveTo(currentPos.withRelativeY(-1), context)
                 KeyCode.KEY_A -> player.moveTo(currentPos.withRelativeX(-1), context)
                 KeyCode.KEY_S -> player.moveTo(currentPos.withRelativeY(1), context)
                 KeyCode.KEY_D -> player.moveTo(currentPos.withRelativeX(1), context)
                 KeyCode.KEY_R -> player.moveUp(context)
                 KeyCode.KEY_F -> player.moveDown(context)
+                KeyCode.KEY_P -> player.pickItemUp(currentPos, context)
+                KeyCode.KEY_I -> player.inspectInventory(currentPos, context) // modify here
                 else -> {
                     logger.debug("UI Event ($uiEvent) does not have a corresponding command, it is ignored.")
                 }
             }
         }
         return true
+    }
+
+    private suspend fun GameEntity<Player>.inspectInventory(position: Position3D, context: GameContext) {
+        receiveMessage(InspectInventory(context, this, position))
+    }
+
+    private suspend fun GameEntity<Player>.pickItemUp(position: Position3D, context: GameContext) {     // 2
+        receiveMessage(PickItemUp(context, this, position))
     }
 
     private suspend fun GameEntity<Player>.moveTo(position: Position3D, context: GameContext) { // 2

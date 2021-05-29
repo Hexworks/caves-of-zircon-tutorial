@@ -5,6 +5,8 @@ import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
 import com.example.cavesofzircon.attributes.FungusSpread
+import com.example.cavesofzircon.attributes.Inventory
+import com.example.cavesofzircon.attributes.ItemIcon
 import com.example.cavesofzircon.attributes.Vision
 import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
@@ -15,6 +17,7 @@ import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.attributes.types.StairsDown
 import com.example.cavesofzircon.attributes.types.StairsUp
 import com.example.cavesofzircon.attributes.types.Wall
+import com.example.cavesofzircon.attributes.types.Zircon
 import com.example.cavesofzircon.messages.Attack
 import com.example.cavesofzircon.messages.Dig
 import com.example.cavesofzircon.systems.Attackable
@@ -24,6 +27,9 @@ import com.example.cavesofzircon.systems.Diggable
 import com.example.cavesofzircon.systems.FogOfWar
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.InputReceiver
+import com.example.cavesofzircon.systems.InventoryInspector
+import com.example.cavesofzircon.systems.ItemDropper
+import com.example.cavesofzircon.systems.ItemPicker
 import com.example.cavesofzircon.systems.Movable
 import com.example.cavesofzircon.systems.StairClimber
 import com.example.cavesofzircon.systems.StairDescender
@@ -32,6 +38,8 @@ import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.builder.EntityBuilder
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.amethyst.api.newEntityOfType
+import org.hexworks.zircon.api.GraphicalTilesetResources
+import org.hexworks.zircon.api.data.Tile
 
 fun <T : EntityType> newGameEntityOfType(
     type: T,
@@ -51,10 +59,21 @@ object EntityFactory {
                 defenseValue = 5
             ),
             EntityTile(GameTileRepository.PLAYER),
-            EntityActions(Dig::class, Attack::class)
+            EntityActions(Dig::class, Attack::class),
+            Inventory(10)
         )
         behaviors(InputReceiver)
-        facets(Movable, CameraMover, StairClimber, StairDescender, Attackable, Destructible)
+        facets(
+            Movable,
+            CameraMover,
+            StairClimber,
+            StairDescender,
+            Attackable,
+            Destructible,
+            ItemPicker,
+            InventoryInspector,
+            ItemDropper
+        )
     }
 
     fun newWall() = newGameEntityOfType(Wall) {
@@ -115,5 +134,18 @@ object EntityFactory {
         )
         facets(Movable, Attackable, Destructible)   // 4
         behaviors(Wanderer)                         // 5
+    }
+
+    fun newZircon() = newGameEntityOfType(Zircon) {
+        attributes(
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("white gem")
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            EntityPosition(),
+            EntityTile(GameTileRepository.ZIRCON)
+        )
     }
 }
