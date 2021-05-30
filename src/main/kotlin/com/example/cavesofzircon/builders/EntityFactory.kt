@@ -1,16 +1,19 @@
 package com.example.cavesofzircon.builders
 
 import com.example.cavesofzircon.attributes.CombatStats
+import com.example.cavesofzircon.attributes.EnergyLevel
 import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
 import com.example.cavesofzircon.attributes.FungusSpread
 import com.example.cavesofzircon.attributes.Inventory
 import com.example.cavesofzircon.attributes.ItemIcon
+import com.example.cavesofzircon.attributes.NutritionalValue
 import com.example.cavesofzircon.attributes.Vision
 import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
 import com.example.cavesofzircon.attributes.types.Bat
+import com.example.cavesofzircon.attributes.types.BatMeat
 import com.example.cavesofzircon.attributes.types.FOW
 import com.example.cavesofzircon.attributes.types.Fungus
 import com.example.cavesofzircon.attributes.types.Player
@@ -23,13 +26,16 @@ import com.example.cavesofzircon.messages.Dig
 import com.example.cavesofzircon.systems.Attackable
 import com.example.cavesofzircon.systems.CameraMover
 import com.example.cavesofzircon.systems.Destructible
+import com.example.cavesofzircon.systems.DigestiveSystem
 import com.example.cavesofzircon.systems.Diggable
+import com.example.cavesofzircon.systems.EnergyExpender
 import com.example.cavesofzircon.systems.FogOfWar
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.InputReceiver
 import com.example.cavesofzircon.systems.InventoryInspector
 import com.example.cavesofzircon.systems.ItemDropper
 import com.example.cavesofzircon.systems.ItemPicker
+import com.example.cavesofzircon.systems.LootDropper
 import com.example.cavesofzircon.systems.Movable
 import com.example.cavesofzircon.systems.StairClimber
 import com.example.cavesofzircon.systems.StairDescender
@@ -60,9 +66,10 @@ object EntityFactory {
             ),
             EntityTile(GameTileRepository.PLAYER),
             EntityActions(Dig::class, Attack::class),
-            Inventory(10)
+            Inventory(10),
+            EnergyLevel(1000, 1000)
         )
-        behaviors(InputReceiver)
+        behaviors(InputReceiver, EnergyExpender)
         facets(
             Movable,
             CameraMover,
@@ -72,7 +79,9 @@ object EntityFactory {
             Destructible,
             ItemPicker,
             InventoryInspector,
-            ItemDropper
+            ItemDropper,
+            EnergyExpender,
+            DigestiveSystem
         )
     }
 
@@ -122,18 +131,21 @@ object EntityFactory {
 
     fun newBat() = newGameEntityOfType(Bat) {
         attributes(
-            BlockOccupier,                      // 1
+            BlockOccupier,
             EntityPosition(),
             EntityTile(GameTileRepository.BAT),
-            CombatStats.create(                 // 2
+            CombatStats.create(
                 maxHp = 5,
                 attackValue = 2,
                 defenseValue = 1
             ),
-            EntityActions(Attack::class)        // 3
+            EntityActions(Attack::class),
+            Inventory(1).apply {
+                addItem(newBatMeat())   // 1
+            }
         )
-        facets(Movable, Attackable, Destructible)   // 4
-        behaviors(Wanderer)                         // 5
+        facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
+        behaviors(Wanderer)
     }
 
     fun newZircon() = newGameEntityOfType(Zircon) {
@@ -146,6 +158,20 @@ object EntityFactory {
             ),
             EntityPosition(),
             EntityTile(GameTileRepository.ZIRCON)
+        )
+    }
+
+    fun newBatMeat() = newGameEntityOfType(BatMeat) {
+        attributes(
+            ItemIcon(
+                Tile.newBuilder()
+                    .withName("Meatball")           // 1
+                    .withTileset(GraphicalTilesetResources.nethack16x16())
+                    .buildGraphicalTile()
+            ),
+            NutritionalValue(750),              // 2
+            EntityPosition(),
+            EntityTile(GameTileRepository.BAT_MEAT)
         )
     }
 }

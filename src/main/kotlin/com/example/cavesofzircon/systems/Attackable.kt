@@ -32,7 +32,7 @@ object Attackable : BaseFacet<GameContext, Attack>(Attack::class) {
                         context = context,
                         source = attacker,
                         target = target,
-                        cause = "a blow to the head"
+                        cause = "after receiving a blow to the head"
                     )
                 )
             }

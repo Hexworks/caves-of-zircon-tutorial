@@ -8,7 +8,7 @@ object Wall : BaseEntityType(
 
 object Player : BaseEntityType(
     name = "player"
-), Combatant, ItemHolder
+), Combatant, ItemHolder, EnergyUser
 
 object Fungus : BaseEntityType(
     name = "fungus"
@@ -28,9 +28,14 @@ object FOW : BaseEntityType(
 
 object Bat : BaseEntityType(
     name = "bat"
-), Combatant
+), Combatant, ItemHolder
 
 object Zircon : BaseEntityType(
     name = "Zircon",
     description = "A small piece of Zircon. Its value is unfathomable."
 ), Item
+
+object BatMeat : BaseEntityType(
+    name = "Bat meat",
+    description = "Stringy bat meat. It is edible, but not tasty."
+), Food

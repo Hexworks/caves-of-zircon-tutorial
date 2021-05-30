@@ -1,8 +1,12 @@
 package com.example.cavesofzircon.systems
 
 import com.example.cavesofzircon.GameConfig
+import com.example.cavesofzircon.attributes.types.EnergyUser
+import com.example.cavesofzircon.attributes.types.Food
 import com.example.cavesofzircon.attributes.types.inventory
+import com.example.cavesofzircon.extensions.whenTypeIs
 import com.example.cavesofzircon.messages.DropItem
+import com.example.cavesofzircon.messages.Eat
 import com.example.cavesofzircon.messages.InspectInventory
 import com.example.cavesofzircon.view.fragment.InventoryFragment
 import com.example.cavesofzircon.world.GameContext
@@ -35,11 +39,24 @@ object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInve
             .withDecorations(box(title = "Inventory"), shadow())
             .build()
 
-        val fragment = InventoryFragment(itemHolder.inventory, DIALOG_SIZE.width - 3) { item ->   // 2
-            CoroutineScope(Dispatchers.Single).launch {                                                 // 3
-                itemHolder.receiveMessage(DropItem(context, itemHolder, item, position))                // 4
-            }
-        }
+        val fragment = InventoryFragment(
+            inventory = itemHolder.inventory,
+            width = DIALOG_SIZE.width - 3,
+            onDrop = { item ->
+                CoroutineScope(Dispatchers.Single).launch {                                                 // 3
+                    itemHolder.receiveMessage(DropItem(context, itemHolder, item, position))                // 4
+                }
+            },
+            onEat = { item ->   // 2
+                CoroutineScope(Dispatchers.Single).launch {                                                 // 3
+                    itemHolder.whenTypeIs<EnergyUser> { eater ->    // 3
+                        item.whenTypeIs<Food> { food ->
+                            itemHolder.inventory.removeItem(food)
+                            itemHolder.receiveMessage(Eat(context, eater, food)) // 4
+                        }
+                    }
+                }
+            })
 
         panel.addFragment(fragment)
 

@@ -9,13 +9,14 @@ import org.hexworks.zircon.api.uievent.Processed
 class InventoryFragment(
     inventory: Inventory,
     width: Int,
-    onDrop: (GameItem) -> Unit
+    onDrop: (GameItem) -> Unit,
+    onEat: (GameItem) -> Unit       // 1
 ) : Fragment {
 
-    override val root = Components.vbox()           // 1
+    override val root = Components.vbox()
         .withSize(width, inventory.size + 1)
         .build().apply {
-            addComponent(Components.hbox()          // 2
+            addComponent(Components.hbox()
                 .withSpacing(1)
                 .withSize(width, 1)
                 .build().apply {
@@ -24,12 +25,17 @@ class InventoryFragment(
                     addComponent(Components.header().withText("Actions").withSize(ACTIONS_COLUMN_WIDTH, 1))
                 }
             )
-            inventory.items.forEach { item ->       // 3
+            inventory.items.forEach { item ->
                 val row = InventoryRowFragment(width, item)
                 addFragment(row).apply {
-                    row.dropButton.onActivated {    // 4
-                        detach()                    // 5
-                        onDrop(item)                // 6
+                    row.dropButton.onActivated {
+                        detach()
+                        onDrop(item)
+                        Processed
+                    }
+                    row.eatButton.onActivated { // 2
+                        detach()
+                        onEat(item)
                         Processed
                     }
                 }
