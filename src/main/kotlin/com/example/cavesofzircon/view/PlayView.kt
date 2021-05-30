@@ -7,6 +7,7 @@ import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.builders.GameTileRepository
 import com.example.cavesofzircon.events.GameLogEvent
+import com.example.cavesofzircon.view.fragment.PlayerStatsFragment
 import com.example.cavesofzircon.world.Game
 import com.example.cavesofzircon.world.GameBuilder
 import org.hexworks.cobalt.databinding.api.extension.toProperty
@@ -38,6 +39,13 @@ class PlayView(
             .withSize(SIDEBAR_WIDTH, WINDOW_HEIGHT)
             .withDecorations(box())
             .build()
+
+        sidebar.addFragment(
+            PlayerStatsFragment(
+                width = sidebar.contentSize.width,
+                player = game.player
+            )
+        )
 
         val logArea = Components.logArea()
             .withDecorations(box(title = "Log"))

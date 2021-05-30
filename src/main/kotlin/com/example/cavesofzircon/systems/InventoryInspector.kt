@@ -34,7 +34,7 @@ object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInve
 
         val screen = context.screen
 
-        val panel = Components.panel()      // 1
+        val panel = Components.panel()
             .withSize(DIALOG_SIZE)
             .withDecorations(box(title = "Inventory"), shadow())
             .build()
@@ -43,16 +43,16 @@ object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInve
             inventory = itemHolder.inventory,
             width = DIALOG_SIZE.width - 3,
             onDrop = { item ->
-                CoroutineScope(Dispatchers.Single).launch {                                                 // 3
-                    itemHolder.receiveMessage(DropItem(context, itemHolder, item, position))                // 4
+                CoroutineScope(Dispatchers.Single).launch {
+                    itemHolder.receiveMessage(DropItem(context, itemHolder, item, position))
                 }
             },
-            onEat = { item ->   // 2
-                CoroutineScope(Dispatchers.Single).launch {                                                 // 3
-                    itemHolder.whenTypeIs<EnergyUser> { eater ->    // 3
+            onEat = { item ->
+                CoroutineScope(Dispatchers.Single).launch {
+                    itemHolder.whenTypeIs<EnergyUser> { eater ->
                         item.whenTypeIs<Food> { food ->
                             itemHolder.inventory.removeItem(food)
-                            itemHolder.receiveMessage(Eat(context, eater, food)) // 4
+                            itemHolder.receiveMessage(Eat(context, eater, food))
                         }
                     }
                 }
@@ -60,13 +60,13 @@ object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInve
 
         panel.addFragment(fragment)
 
-        val modal = ModalBuilder.newBuilder<EmptyModalResult>()     // 5
+        val modal = ModalBuilder.newBuilder<EmptyModalResult>()
             .withParentSize(screen.size)
             .withComponent(panel)
             .withCenteredDialog(true)
             .build()
 
-        panel.addComponent(Components.button()                      // 6
+        panel.addComponent(Components.button()
             .withText("Close")
             .withAlignmentWithin(panel, ComponentAlignment.BOTTOM_LEFT)
             .build().apply {
