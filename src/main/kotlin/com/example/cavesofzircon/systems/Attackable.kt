@@ -1,6 +1,8 @@
 package com.example.cavesofzircon.systems
 
 import com.example.cavesofzircon.attributes.types.combatStats
+import com.example.cavesofzircon.extensions.attackValue
+import com.example.cavesofzircon.extensions.defenseValue
 import com.example.cavesofzircon.extensions.hasNoHealthLeft
 import com.example.cavesofzircon.extensions.isPlayer
 import com.example.cavesofzircon.functions.logGameEvent
@@ -20,7 +22,7 @@ object Attackable : BaseFacet<GameContext, Attack>(Attack::class) {
 
         return if (attacker.isPlayer || target.isPlayer) { // 1
 
-            val damage = max(0, attacker.combatStats.attackValue - target.combatStats.defenseValue)
+            val damage = Math.max(0, attacker.attackValue - target.defenseValue)
             val finalDamage = (Math.random() * damage).toInt() + 1
             target.combatStats.hp -= finalDamage
 

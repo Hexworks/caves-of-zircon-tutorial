@@ -1,10 +1,12 @@
 package com.example.cavesofzircon.world
 
 import com.example.cavesofzircon.GameConfig
+import com.example.cavesofzircon.GameConfig.ARMOR_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.BATS_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.FUNGI_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.LOG_AREA_HEIGHT
 import com.example.cavesofzircon.GameConfig.SIDEBAR_WIDTH
+import com.example.cavesofzircon.GameConfig.WEAPONS_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.GameConfig.WORLD_SIZE
@@ -37,6 +39,8 @@ class GameBuilder(val worldSize: Size3D) {
         addFungi()
         addBats()
         addZircons()
+        addWeapons()
+        addArmor()
 
         world.addWorldEntity(EntityFactory.newFogOfWar())
 
@@ -91,6 +95,22 @@ class GameBuilder(val worldSize: Size3D) {
             size = Size3D.from2DSize(atArea)
         )                          // 5
         return this
+    }
+
+    private fun addWeapons() = also {
+        repeat(world.actualSize.zLength) { level ->
+            repeat(WEAPONS_PER_LEVEL) {
+                EntityFactory.newRandomWeapon().addToWorld(level)
+            }
+        }
+    }
+
+    private fun addArmor() = also {
+        repeat(world.actualSize.zLength) { level ->
+            repeat(ARMOR_PER_LEVEL) {
+                EntityFactory.newRandomArmor().addToWorld(level)
+            }
+        }
     }
 
     companion object {

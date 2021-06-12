@@ -1,5 +1,7 @@
 package com.example.cavesofzircon.extensions
 
+import com.example.cavesofzircon.attributes.types.CombatItem
+import com.example.cavesofzircon.attributes.types.EquipmentHolder
 import com.example.cavesofzircon.attributes.types.Item
 import com.example.cavesofzircon.attributes.types.ItemHolder
 import com.example.cavesofzircon.world.GameContext
@@ -16,3 +18,7 @@ typealias GameMessage = Message<GameContext>
 typealias GameItem = GameEntity<Item>
 
 typealias GameItemHolder = GameEntity<ItemHolder>
+
+typealias GameCombatItem = GameEntity<CombatItem>
+
+typealias GameEquipmentHolder = GameEntity<EquipmentHolder>

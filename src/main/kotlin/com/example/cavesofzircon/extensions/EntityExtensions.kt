@@ -1,8 +1,11 @@
 package com.example.cavesofzircon.extensions
 
+import com.example.cavesofzircon.attributes.CombatStats
 import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
+import com.example.cavesofzircon.attributes.Equipment
+import com.example.cavesofzircon.attributes.ItemCombatStats
 import com.example.cavesofzircon.attributes.VisionBlocker
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
 import com.example.cavesofzircon.attributes.types.Combatant
@@ -68,3 +71,19 @@ inline fun <reified T : EntityType> AnyGameEntity.whenTypeIs(fn: (Entity<T, Game
         fn(this as Entity<T, GameContext>)
     }
 }
+
+val AnyGameEntity.attackValue: Int
+    get() {
+        val combat = findAttribute(CombatStats::class).map { it.attackValue }.orElse(0)
+        val equipment = findAttribute(Equipment::class).map { it.attackValue }.orElse(0)
+        val item = findAttribute(ItemCombatStats::class).map { it.attackValue }.orElse(0)
+        return combat + equipment + item
+    }
+
+val AnyGameEntity.defenseValue: Int
+    get() {
+        val combat = findAttribute(CombatStats::class).map { it.defenseValue }.orElse(0)
+        val equipment = findAttribute(Equipment::class).map { it.defenseValue }.orElse(0)
+        val item = findAttribute(ItemCombatStats::class).map { it.defenseValue }.orElse(0)
+        return combat + equipment + item
+    }

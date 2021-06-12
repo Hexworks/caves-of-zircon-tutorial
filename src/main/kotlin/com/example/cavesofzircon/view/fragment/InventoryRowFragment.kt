@@ -1,5 +1,6 @@
 package com.example.cavesofzircon.view.fragment
 
+import com.example.cavesofzircon.attributes.types.CombatItem
 import com.example.cavesofzircon.attributes.types.Food
 import com.example.cavesofzircon.attributes.types.iconTile
 import com.example.cavesofzircon.extensions.GameItem
@@ -19,6 +20,11 @@ class InventoryRowFragment(width: Int, item: GameItem) : Fragment {
         .withText("Eat")
         .build()
 
+    val equipButton = Components.button()
+            .withDecorations()
+            .withText("Equip")
+            .build()
+
     override val root = Components.hbox()
         .withSpacing(1)
         .withSize(width, 1)
@@ -35,6 +41,9 @@ class InventoryRowFragment(width: Int, item: GameItem) : Fragment {
             addComponent(dropButton)
             item.whenTypeIs<Food> {     // 3
                 addComponent(eatButton)
+            }
+            item.whenTypeIs<CombatItem> {
+                addComponent(equipButton)
             }
         }
 }

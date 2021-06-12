@@ -17,8 +17,6 @@ import kotlin.reflect.KClass
 
 object EnergyExpender : BaseActor<GameContext, Expend>(Expend::class, EnergyLevel::class) {
 
-    override val messageType: KClass<Expend> = Expend::class
-
     override suspend fun receive(message: Expend): Response {
         val (context, entity, energy) = message
         entity.energyLevel.currentEnergy -= energy              // 1

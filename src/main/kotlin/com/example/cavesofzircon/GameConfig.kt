@@ -34,6 +34,9 @@ object GameConfig {
         zLength = 1
     )
 
+    const val WEAPONS_PER_LEVEL = 3
+    const val ARMOR_PER_LEVEL = 3
+
     fun buildAppConfig() = AppConfig.newBuilder()
         .withDefaultTileset(TILESET)
         .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
