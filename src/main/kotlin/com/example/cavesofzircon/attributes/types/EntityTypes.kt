@@ -8,7 +8,7 @@ object Wall : BaseEntityType(
 
 object Player : BaseEntityType(
         name = "player"
-), Combatant, ItemHolder, EnergyUser, EquipmentHolder
+), Combatant, ItemHolder, EnergyUser, EquipmentHolder, ExperienceGainer
 
 object Fungus : BaseEntityType(
         name = "fungus"

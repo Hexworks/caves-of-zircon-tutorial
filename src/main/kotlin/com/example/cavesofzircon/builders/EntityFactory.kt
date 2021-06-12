@@ -6,6 +6,7 @@ import com.example.cavesofzircon.attributes.EntityActions
 import com.example.cavesofzircon.attributes.EntityPosition
 import com.example.cavesofzircon.attributes.EntityTile
 import com.example.cavesofzircon.attributes.Equipment
+import com.example.cavesofzircon.attributes.Experience
 import com.example.cavesofzircon.attributes.FungusSpread
 import com.example.cavesofzircon.attributes.Inventory
 import com.example.cavesofzircon.attributes.ItemCombatStats
@@ -43,6 +44,7 @@ import com.example.cavesofzircon.systems.Destructible
 import com.example.cavesofzircon.systems.DigestiveSystem
 import com.example.cavesofzircon.systems.Diggable
 import com.example.cavesofzircon.systems.EnergyExpender
+import com.example.cavesofzircon.systems.ExperienceAccumulator
 import com.example.cavesofzircon.systems.FogOfWar
 import com.example.cavesofzircon.systems.FungusGrowth
 import com.example.cavesofzircon.systems.HunterSeeker
@@ -87,7 +89,8 @@ object EntityFactory {
                 Equipment(
                         initialWeapon = newClub(),
                         initialArmor = newJacket()
-                )
+                ),
+                Experience()
         )
         behaviors(InputReceiver, EnergyExpender)
         facets(
@@ -101,7 +104,8 @@ object EntityFactory {
                 InventoryInspector,
                 ItemDropper,
                 EnergyExpender,
-                DigestiveSystem
+                DigestiveSystem,
+                ExperienceAccumulator
         )
     }
 

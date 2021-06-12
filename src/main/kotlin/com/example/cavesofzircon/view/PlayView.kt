@@ -7,6 +7,8 @@ import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.builders.GameTileRepository
 import com.example.cavesofzircon.events.GameLogEvent
+import com.example.cavesofzircon.events.PlayerGainedLevel
+import com.example.cavesofzircon.view.dialog.LevelUpDialog
 import com.example.cavesofzircon.view.fragment.PlayerStatsFragment
 import com.example.cavesofzircon.world.Game
 import com.example.cavesofzircon.world.GameBuilder
@@ -77,6 +79,11 @@ class PlayView(
                 withNewLine = false,
                 withTypingEffectSpeedInMs = 10
             )
+            KeepSubscription
+        }
+
+        Zircon.eventBus.subscribeTo<PlayerGainedLevel> {
+            screen.openModal(LevelUpDialog(screen, game.player))
             KeepSubscription
         }
 
