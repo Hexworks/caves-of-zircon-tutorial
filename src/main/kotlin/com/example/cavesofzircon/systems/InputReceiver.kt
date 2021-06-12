@@ -8,12 +8,14 @@ import com.example.cavesofzircon.messages.MoveDown
 import com.example.cavesofzircon.messages.MoveTo
 import com.example.cavesofzircon.messages.MoveUp
 import com.example.cavesofzircon.messages.PickItemUp
+import com.example.cavesofzircon.view.dialog.HelpDialog
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.base.BaseBehavior
 import org.hexworks.amethyst.api.entity.Entity
 import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.cobalt.logging.api.LoggerFactory
 import org.hexworks.zircon.api.data.Position3D
+import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.uievent.KeyCode
 import org.hexworks.zircon.api.uievent.KeyboardEvent
 
@@ -33,7 +35,8 @@ object InputReceiver : BaseBehavior<GameContext>() {
                 KeyCode.KEY_R -> player.moveUp(context)
                 KeyCode.KEY_F -> player.moveDown(context)
                 KeyCode.KEY_P -> player.pickItemUp(currentPos, context)
-                KeyCode.KEY_I -> player.inspectInventory(currentPos, context) // modify here
+                KeyCode.KEY_I -> player.inspectInventory(currentPos, context)
+                KeyCode.KEY_H -> context.screen.showHelp()
                 else -> {
                     logger.debug("UI Event ($uiEvent) does not have a corresponding command, it is ignored.")
                 }
@@ -61,4 +64,9 @@ object InputReceiver : BaseBehavior<GameContext>() {
     private suspend fun GameEntity<Player>.moveDown(context: GameContext) {
         receiveMessage(MoveDown(context, this))
     }
+
+    private fun Screen.showHelp() {
+        this.openModal(HelpDialog(this))
+    }
+
 }

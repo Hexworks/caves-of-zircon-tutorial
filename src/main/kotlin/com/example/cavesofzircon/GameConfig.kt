@@ -27,18 +27,18 @@ object GameConfig {
     const val BATS_PER_LEVEL = 10
     const val ZIRCONS_PER_LEVEL = 20
 
-    val WORLD_SIZE = Size3D.create(WINDOW_WIDTH * 2, WINDOW_HEIGHT * 2 , DUNGEON_LEVELS)
+    val WORLD_SIZE = Size3D.create(WINDOW_WIDTH * 2, WINDOW_HEIGHT * 2, DUNGEON_LEVELS)
     val GAME_COMPONENT_SIZE = Size3D.create(
-        xLength = WINDOW_WIDTH - SIDEBAR_WIDTH,
-        yLength = WINDOW_HEIGHT - LOG_AREA_HEIGHT,
-        zLength = 1
+            xLength = WINDOW_WIDTH - SIDEBAR_WIDTH,
+            yLength = WINDOW_HEIGHT - LOG_AREA_HEIGHT,
+            zLength = 1
     )
 
     const val ZOMBIES_PER_LEVEL = 3
 
     fun buildAppConfig() = AppConfig.newBuilder()
-        .withDefaultTileset(TILESET)
-        .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
-        .build()
+            .withDefaultTileset(TILESET)
+            .withSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+            .build()
 
 }

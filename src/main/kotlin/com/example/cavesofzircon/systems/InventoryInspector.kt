@@ -12,6 +12,7 @@ import com.example.cavesofzircon.extensions.whenTypeIs
 import com.example.cavesofzircon.messages.DropItem
 import com.example.cavesofzircon.messages.Eat
 import com.example.cavesofzircon.messages.InspectInventory
+import com.example.cavesofzircon.view.dialog.ExamineDialog
 import com.example.cavesofzircon.view.fragment.InventoryFragment
 import com.example.cavesofzircon.world.GameContext
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +33,7 @@ import org.hexworks.zircon.internal.component.modal.EmptyModalResult
 
 object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInventory::class) {
 
-    val DIALOG_SIZE = Size.create(35, 15)
+    val DIALOG_SIZE = Size.create(40, 15)
 
     override suspend fun receive(message: InspectInventory): Response {
         val (context, itemHolder, position) = message
@@ -70,6 +71,9 @@ object InventoryInspector : BaseFacet<GameContext, InspectInventory>(InspectInve
                         }
                     }
                     result  // 4
+                },
+                onExamine = { item ->
+                    screen.openModal(ExamineDialog(screen, item))
                 })
 
         panel.addFragment(fragment)

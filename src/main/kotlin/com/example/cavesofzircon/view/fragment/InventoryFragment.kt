@@ -14,7 +14,8 @@ class InventoryFragment(
         width: Int,
         private val onDrop: (GameItem) -> Unit,
         private val onEat: (GameItem) -> Unit,
-        private val onEquip: (GameItem) -> Maybe<GameItem> // 1
+        private val onEquip: (GameItem) -> Maybe<GameItem>,
+        private val onExamine: (GameItem) -> Unit
 ) : Fragment {
 
     override val root = Components.vbox()
@@ -52,6 +53,9 @@ class InventoryFragment(
                     detach()
                     addRow(width, oldItem, list)
                 }
+            }
+            row.examineButton.onActivated {
+                onExamine(item)
             }
         }
         list.theme = GameConfig.THEME
