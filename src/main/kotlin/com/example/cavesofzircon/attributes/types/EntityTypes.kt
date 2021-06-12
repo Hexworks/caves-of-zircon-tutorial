@@ -8,7 +8,7 @@ object Wall : BaseEntityType(
 
 object Player : BaseEntityType(
         name = "player"
-), Combatant, ItemHolder, EnergyUser, EquipmentHolder, ExperienceGainer
+), Combatant, ItemHolder, EnergyUser, EquipmentHolder, ExperienceGainer, ZirconHolder
 
 object Fungus : BaseEntityType(
         name = "fungus"
@@ -83,3 +83,7 @@ object Jacket : BaseEntityType(
 object Zombie : BaseEntityType(
         name = "zombie"
 ), Combatant, ItemHolder
+
+object Exit : BaseEntityType(
+        name = "exit"
+)

@@ -14,12 +14,14 @@ import com.example.cavesofzircon.attributes.ItemIcon
 import com.example.cavesofzircon.attributes.NutritionalValue
 import com.example.cavesofzircon.attributes.Vision
 import com.example.cavesofzircon.attributes.VisionBlocker
+import com.example.cavesofzircon.attributes.ZirconCounter
 import com.example.cavesofzircon.attributes.flags.BlockOccupier
 import com.example.cavesofzircon.attributes.types.Armor
 import com.example.cavesofzircon.attributes.types.Bat
 import com.example.cavesofzircon.attributes.types.BatMeat
 import com.example.cavesofzircon.attributes.types.Club
 import com.example.cavesofzircon.attributes.types.Dagger
+import com.example.cavesofzircon.attributes.types.Exit
 import com.example.cavesofzircon.attributes.types.FOW
 import com.example.cavesofzircon.attributes.types.Fungus
 import com.example.cavesofzircon.attributes.types.HeavyArmor
@@ -57,6 +59,7 @@ import com.example.cavesofzircon.systems.Movable
 import com.example.cavesofzircon.systems.StairClimber
 import com.example.cavesofzircon.systems.StairDescender
 import com.example.cavesofzircon.systems.Wanderer
+import com.example.cavesofzircon.systems.ZirconGatherer
 import com.example.cavesofzircon.world.GameContext
 import org.hexworks.amethyst.api.builder.EntityBuilder
 import org.hexworks.amethyst.api.entity.EntityType
@@ -90,7 +93,8 @@ object EntityFactory {
                         initialWeapon = newClub(),
                         initialArmor = newJacket()
                 ),
-                Experience()
+                Experience(),
+                ZirconCounter()
         )
         behaviors(InputReceiver, EnergyExpender)
         facets(
@@ -100,6 +104,7 @@ object EntityFactory {
                 StairDescender,
                 Attackable,
                 Destructible,
+                ZirconGatherer,
                 ItemPicker,
                 InventoryInspector,
                 ItemDropper,
@@ -320,5 +325,10 @@ object EntityFactory {
                 EntityActions(Attack::class))
         facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
         behaviors(HunterSeeker or Wanderer)
+    }
+
+    fun newExit() = newGameEntityOfType(Exit) {
+        attributes(EntityTile(GameTileRepository.EXIT),
+                EntityPosition())
     }
 }

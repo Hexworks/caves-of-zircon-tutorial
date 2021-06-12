@@ -7,12 +7,15 @@ import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.builders.GameTileRepository
 import com.example.cavesofzircon.events.GameLogEvent
+import com.example.cavesofzircon.events.PlayerDied
 import com.example.cavesofzircon.events.PlayerGainedLevel
+import com.example.cavesofzircon.events.PlayerWonTheGame
 import com.example.cavesofzircon.view.dialog.LevelUpDialog
 import com.example.cavesofzircon.view.fragment.PlayerStatsFragment
 import com.example.cavesofzircon.world.Game
 import com.example.cavesofzircon.world.GameBuilder
 import org.hexworks.cobalt.databinding.api.extension.toProperty
+import org.hexworks.cobalt.events.api.DisposeSubscription
 import org.hexworks.cobalt.events.api.KeepSubscription
 import org.hexworks.cobalt.events.api.subscribeTo
 import org.hexworks.zircon.api.ComponentDecorations.box
@@ -31,41 +34,41 @@ import org.hexworks.zircon.internal.Zircon
 import org.hexworks.zircon.internal.game.impl.GameAreaComponentRenderer
 
 class PlayView(
-    private val grid: TileGrid,
-    private val game: Game = GameBuilder.create(),
-    theme: ColorTheme = GameConfig.THEME
+        private val grid: TileGrid,
+        private val game: Game = GameBuilder.create(),
+        theme: ColorTheme = GameConfig.THEME
 ) : BaseView(grid, theme) {
 
     init {
         val sidebar = Components.panel()
-            .withSize(SIDEBAR_WIDTH, WINDOW_HEIGHT)
-            .withDecorations(box())
-            .build()
+                .withSize(SIDEBAR_WIDTH, WINDOW_HEIGHT)
+                .withDecorations(box())
+                .build()
 
         sidebar.addFragment(
-            PlayerStatsFragment(
-                width = sidebar.contentSize.width,
-                player = game.player
-            )
+                PlayerStatsFragment(
+                        width = sidebar.contentSize.width,
+                        player = game.player
+                )
         )
 
         val logArea = Components.logArea()
-            .withDecorations(box(title = "Log"))
-            .withSize(WINDOW_WIDTH - SIDEBAR_WIDTH, LOG_AREA_HEIGHT)
-            .withAlignmentWithin(screen, BOTTOM_RIGHT)
-            .build()
+                .withDecorations(box(title = "Log"))
+                .withSize(WINDOW_WIDTH - SIDEBAR_WIDTH, LOG_AREA_HEIGHT)
+                .withAlignmentWithin(screen, BOTTOM_RIGHT)
+                .build()
 
         val gameComponent = Components.panel()
-            .withSize(game.world.visibleSize.to2DSize())
-            .withComponentRenderer(
-                GameAreaComponentRenderer(
-                    gameArea = game.world,
-                    projectionMode = TOP_DOWN.toProperty(),
-                    fillerTile = GameTileRepository.FLOOR
+                .withSize(game.world.visibleSize.to2DSize())
+                .withComponentRenderer(
+                        GameAreaComponentRenderer(
+                                gameArea = game.world,
+                                projectionMode = TOP_DOWN.toProperty(),
+                                fillerTile = GameTileRepository.FLOOR
+                        )
                 )
-            )
-            .withAlignmentWithin(screen, TOP_RIGHT)
-            .build()
+                .withAlignmentWithin(screen, TOP_RIGHT)
+                .build()
 
         screen.addComponents(sidebar, logArea, gameComponent)
         screen.handleKeyboardEvents(KeyboardEventType.KEY_PRESSED) { event, _ ->
@@ -75,9 +78,9 @@ class PlayView(
 
         Zircon.eventBus.subscribeTo<GameLogEvent> { (text) ->
             logArea.addParagraph(
-                paragraph = text,
-                withNewLine = false,
-                withTypingEffectSpeedInMs = 10
+                    paragraph = text,
+                    withNewLine = false,
+                    withTypingEffectSpeedInMs = 10
             )
             KeepSubscription
         }
@@ -87,12 +90,22 @@ class PlayView(
             KeepSubscription
         }
 
+        Zircon.eventBus.subscribeTo<PlayerWonTheGame> {
+            replaceWith(WinView(grid, it.zircons))
+            DisposeSubscription
+        }
+
+        Zircon.eventBus.subscribeTo<PlayerDied> {
+            replaceWith(LoseView(grid, it.cause))
+            DisposeSubscription
+        }
+
         game.world.update(
-            screen, KeyboardEvent(
+                screen, KeyboardEvent(
                 type = KeyboardEventType.KEY_TYPED,
                 key = "",
                 code = KeyCode.DEAD_GRAVE
-            ), game
+        ), game
         )
     }
 

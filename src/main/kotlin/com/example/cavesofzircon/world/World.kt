@@ -1,10 +1,13 @@
 package com.example.cavesofzircon.world
 
 import com.example.cavesofzircon.attributes.Vision
+import com.example.cavesofzircon.attributes.types.Item
 import com.example.cavesofzircon.blocks.GameBlock
 import com.example.cavesofzircon.extensions.AnyGameEntity
 import com.example.cavesofzircon.extensions.GameEntity
+import com.example.cavesofzircon.extensions.GameItem
 import com.example.cavesofzircon.extensions.blocksVision
+import com.example.cavesofzircon.extensions.filterType
 import com.example.cavesofzircon.extensions.position
 import org.hexworks.amethyst.api.Engine
 import org.hexworks.amethyst.api.entity.Entity
@@ -12,7 +15,6 @@ import org.hexworks.amethyst.api.entity.EntityType
 import org.hexworks.amethyst.internal.TurnBasedEngine
 import org.hexworks.cobalt.datatypes.Maybe
 import org.hexworks.zircon.api.builder.game.GameAreaBuilder
-import org.hexworks.zircon.api.data.Block
 import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.data.Position3D
 import org.hexworks.zircon.api.data.Size3D
@@ -69,9 +71,6 @@ class World(
         }
         return success                                                              // 6
     }
-
-    private fun bothBlocksPresent(oldBlock: Maybe<GameBlock>, newBlock: Maybe<GameBlock>) =  // 7
-            oldBlock.isPresent && newBlock.isPresent
 
     /**
      * Adds the given [Entity] at the given [Position3D].
@@ -185,10 +184,18 @@ class World(
         return result
     }
 
+    fun findTopItem(position: Position3D): Maybe<GameItem> =
+            fetchBlockAt(position).flatMap { block ->                                   // 5
+                Maybe.ofNullable(block.entities.filterType<Item>().firstOrNull())
+            }
+
     private fun Position3D.isWithinRangeOf(other: Position3D, radius: Int): Boolean {
         return this.isUnknown.not()
                 && other.isUnknown.not()
                 && this.z == other.z
                 && abs(x - other.x) + abs(y - other.y) <= radius
     }
+
+    private fun bothBlocksPresent(oldBlock: Maybe<GameBlock>, newBlock: Maybe<GameBlock>) =  // 7
+            oldBlock.isPresent && newBlock.isPresent
 }

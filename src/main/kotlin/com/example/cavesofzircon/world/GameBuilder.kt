@@ -39,6 +39,7 @@ class GameBuilder(val worldSize: Size3D) {
         addBats()
         addZircons()
         addZombies()
+        addExit()
 
         world.addWorldEntity(EntityFactory.newFogOfWar())
 
@@ -101,6 +102,10 @@ class GameBuilder(val worldSize: Size3D) {
                 EntityFactory.newZombie().addToWorld(level)
             }
         }
+    }
+
+    private fun addExit() = also {
+        EntityFactory.newExit().addToWorld(0)
     }
 
     companion object {
