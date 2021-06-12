@@ -1,15 +1,14 @@
 package com.example.cavesofzircon.world
 
 import com.example.cavesofzircon.GameConfig
-import com.example.cavesofzircon.GameConfig.ARMOR_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.BATS_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.FUNGI_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.LOG_AREA_HEIGHT
 import com.example.cavesofzircon.GameConfig.SIDEBAR_WIDTH
-import com.example.cavesofzircon.GameConfig.WEAPONS_PER_LEVEL
 import com.example.cavesofzircon.GameConfig.WINDOW_HEIGHT
 import com.example.cavesofzircon.GameConfig.WINDOW_WIDTH
 import com.example.cavesofzircon.GameConfig.WORLD_SIZE
+import com.example.cavesofzircon.GameConfig.ZOMBIES_PER_LEVEL
 import com.example.cavesofzircon.attributes.types.Player
 import com.example.cavesofzircon.builders.EntityFactory
 import com.example.cavesofzircon.builders.WorldBuilder
@@ -39,8 +38,7 @@ class GameBuilder(val worldSize: Size3D) {
         addFungi()
         addBats()
         addZircons()
-        addWeapons()
-        addArmor()
+        addZombies()
 
         world.addWorldEntity(EntityFactory.newFogOfWar())
 
@@ -97,18 +95,10 @@ class GameBuilder(val worldSize: Size3D) {
         return this
     }
 
-    private fun addWeapons() = also {
+    private fun addZombies() = also {
         repeat(world.actualSize.zLength) { level ->
-            repeat(WEAPONS_PER_LEVEL) {
-                EntityFactory.newRandomWeapon().addToWorld(level)
-            }
-        }
-    }
-
-    private fun addArmor() = also {
-        repeat(world.actualSize.zLength) { level ->
-            repeat(ARMOR_PER_LEVEL) {
-                EntityFactory.newRandomArmor().addToWorld(level)
+            repeat(ZOMBIES_PER_LEVEL) {
+                EntityFactory.newZombie().addToWorld(level)
             }
         }
     }

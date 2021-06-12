@@ -22,15 +22,16 @@ import org.hexworks.zircon.api.screen.Screen
 import org.hexworks.zircon.api.shape.EllipseFactory
 import org.hexworks.zircon.api.shape.LineFactory
 import org.hexworks.zircon.api.uievent.UIEvent
+import kotlin.math.abs
 
 class World(
-    startingBlocks: Map<Position3D, GameBlock>,
-    visibleSize: Size3D,
-    actualSize: Size3D
+        startingBlocks: Map<Position3D, GameBlock>,
+        visibleSize: Size3D,
+        actualSize: Size3D
 ) : GameArea<Tile, GameBlock> by GameAreaBuilder.newBuilder<Tile, GameBlock>()
-    .withVisibleSize(visibleSize)
-    .withActualSize(actualSize)
-    .build() {
+        .withVisibleSize(visibleSize)
+        .withActualSize(actualSize)
+        .build() {
 
     private val engine: TurnBasedEngine<GameContext> = Engine.create()
 
@@ -46,12 +47,12 @@ class World(
 
     fun update(screen: Screen, uiEvent: UIEvent, game: Game) { // 1
         engine.executeTurn(
-            GameContext( // 2
-                world = this,
-                screen = screen, // 3
-                uiEvent = uiEvent, // 4
-                player = game.player
-            )
+                GameContext( // 2
+                        world = this,
+                        screen = screen, // 3
+                        uiEvent = uiEvent, // 4
+                        player = game.player
+                )
         ) // 5
     }
 
@@ -70,7 +71,7 @@ class World(
     }
 
     private fun bothBlocksPresent(oldBlock: Maybe<GameBlock>, newBlock: Maybe<GameBlock>) =  // 7
-        oldBlock.isPresent && newBlock.isPresent
+            oldBlock.isPresent && newBlock.isPresent
 
     /**
      * Adds the given [Entity] at the given [Position3D].
@@ -78,8 +79,8 @@ class World(
      * given [Entity].
      */
     fun addEntity(
-        entity: Entity<EntityType, GameContext>,
-        position: Position3D
+            entity: Entity<EntityType, GameContext>,
+            position: Position3D
     ) {
         entity.position = position
         engine.addEntity(entity)
@@ -89,18 +90,18 @@ class World(
     }
 
     fun addAtEmptyPosition(
-        entity: AnyGameEntity,
-        offset: Position3D = Position3D.create(0, 0, 0),
-        size: Size3D = actualSize
+            entity: AnyGameEntity,
+            offset: Position3D = Position3D.create(0, 0, 0),
+            size: Size3D = actualSize
     ): Boolean {
         return findEmptyLocationWithin(offset, size).fold(
-            whenEmpty = {
-                false
-            },
-            whenPresent = { location ->
-                addEntity(entity, location)
-                true
-            })
+                whenEmpty = {
+                    false
+                },
+                whenPresent = { location ->
+                    addEntity(entity, location)
+                    true
+                })
 
     }
 
@@ -121,9 +122,9 @@ class World(
         var currentTry = 0
         while (position.isPresent.not() && currentTry < maxTries) {
             val pos = Position3D.create(
-                x = (Math.random() * size.xLength).toInt() + offset.x,
-                y = (Math.random() * size.yLength).toInt() + offset.y,
-                z = (Math.random() * size.zLength).toInt() + offset.z
+                    x = (Math.random() * size.xLength).toInt() + offset.x,
+                    y = (Math.random() * size.yLength).toInt() + offset.y,
+                    z = (Math.random() * size.zLength).toInt() + offset.z
             )
             fetchBlockAt(pos).map {
                 if (it.isEmptyFloor) {
@@ -145,25 +146,49 @@ class World(
         val centerPos = entity.position.to2DPosition()                  // 3
         return entity.findAttribute(Vision::class).map { (radius) ->    // 4
             EllipseFactory.buildEllipse(                                // 5
-                fromPosition = centerPos,
-                toPosition = centerPos.withRelativeX(radius).withRelativeY(radius)
+                    fromPosition = centerPos,
+                    toPosition = centerPos.withRelativeX(radius).withRelativeY(radius)
             )
-                .positions
-                .flatMap { ringPos ->
-                    val result = mutableListOf<Position>()
-                    val iter = LineFactory.buildLine(centerPos, ringPos).iterator() // 6
-                    do {
-                        val next = iter.next()
-                        result.add(next)
-                    } while (iter.hasNext() &&
-                        isVisionBlockedAt(Position3D.from2DPosition(next, entity.position.z)).not()
-                    )                                                               // 7
-                    result
-                }
+                    .positions
+                    .flatMap { ringPos ->
+                        val result = mutableListOf<Position>()
+                        val iter = LineFactory.buildLine(centerPos, ringPos).iterator() // 6
+                        do {
+                            val next = iter.next()
+                            result.add(next)
+                        } while (iter.hasNext() &&
+                                isVisionBlockedAt(Position3D.from2DPosition(next, entity.position.z)).not()
+                        )                                                               // 7
+                        result
+                    }
         }.orElse(listOf())                                                          // 8
     }
 
     fun addWorldEntity(entity: Entity<EntityType, GameContext>) {
         engine.addEntity(entity)
+    }
+
+    fun findPath(
+            looker: GameEntity<EntityType>,
+            target: GameEntity<EntityType>
+    ): List<Position> { // 1
+        var result = listOf<Position>()
+        looker.findAttribute(Vision::class).map { (radius) ->                   // 2
+            val level = looker.position.z
+            if (looker.position.isWithinRangeOf(target.position, radius)) {     // 3
+                val path = LineFactory.buildLine(looker.position.to2DPosition(), target.position.to2DPosition())  // 4
+                if (path.none { isVisionBlockedAt(it.toPosition3D(level)) }) {  // 5
+                    result = path.positions.toList().drop(1)
+                }
+            }
+        }
+        return result
+    }
+
+    private fun Position3D.isWithinRangeOf(other: Position3D, radius: Int): Boolean {
+        return this.isUnknown.not()
+                && other.isUnknown.not()
+                && this.z == other.z
+                && abs(x - other.x) + abs(y - other.y) <= radius
     }
 }

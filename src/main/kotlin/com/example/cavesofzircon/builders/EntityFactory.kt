@@ -33,6 +33,7 @@ import com.example.cavesofzircon.attributes.types.Sword
 import com.example.cavesofzircon.attributes.types.Wall
 import com.example.cavesofzircon.attributes.types.Weapon
 import com.example.cavesofzircon.attributes.types.Zircon
+import com.example.cavesofzircon.attributes.types.Zombie
 import com.example.cavesofzircon.extensions.GameEntity
 import com.example.cavesofzircon.messages.Attack
 import com.example.cavesofzircon.messages.Dig
@@ -44,6 +45,7 @@ import com.example.cavesofzircon.systems.Diggable
 import com.example.cavesofzircon.systems.EnergyExpender
 import com.example.cavesofzircon.systems.FogOfWar
 import com.example.cavesofzircon.systems.FungusGrowth
+import com.example.cavesofzircon.systems.HunterSeeker
 import com.example.cavesofzircon.systems.InputReceiver
 import com.example.cavesofzircon.systems.InventoryInspector
 import com.example.cavesofzircon.systems.ItemDropper
@@ -296,5 +298,23 @@ object EntityFactory {
         0 -> newLightArmor()
         1 -> newMediumArmor()
         else -> newHeavyArmor()
+    }
+
+    fun newZombie() = newGameEntityOfType(Zombie) {
+        attributes(BlockOccupier,
+                EntityPosition(),
+                EntityTile(GameTileRepository.ZOMBIE),
+                Vision(10),
+                CombatStats.create(
+                        maxHp = 25,
+                        attackValue = 8,
+                        defenseValue = 4),
+                Inventory(2).apply {
+                    addItem(newRandomWeapon())
+                    addItem(newRandomArmor())
+                },
+                EntityActions(Attack::class))
+        facets(Movable, Attackable, ItemDropper, LootDropper, Destructible)
+        behaviors(HunterSeeker or Wanderer)
     }
 }
